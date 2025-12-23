@@ -5,7 +5,7 @@ import { StoreContext } from '../../Context/StoreContext'
 import axios from 'axios';
 const LoginPopup = ({setShowLogin}) => {
   const {url,setToken} = useContext(StoreContext)
-    const [currState, setCurrState] = React.useState("Login");
+    const [currState, setCurrState] = React.useState("Signup");
     const [data,setData] = useState({
         name:"",
         email:"",
@@ -18,29 +18,33 @@ const LoginPopup = ({setShowLogin}) => {
       setData({...data,[name]:value})
     }
 
-    const onLogin = async (event)=>{
-      event.preventDefault()
-      let newUrl = url;
-      if(currState==="login"){
-        newUrl +="/api?user?login"
-      }
-      else{
-        newUrl +="/api/user/register"
-      }
+    const onLogin = async (event) => {
+  event.preventDefault();
 
-      const response = await axios.post(newUrl,data);
+  let newUrl = url;
 
-      if(response.data.success){
-        setToken(response.data.token);
-        localStorage.setItem("token",response.data.token);
-        setShowLogin(false);
-      }
-      else{
-        alert(response.data.message);
-      }
+  if (currState === "Login") {
+    newUrl += "/api/user/login";
+  } else {
+    newUrl += "/api/user/register";
+  }
 
+  try {
+    const response = await axios.post(newUrl, data);
 
+    if (response.data.success) {
+      setToken(response.data.token);
+      localStorage.setItem("token", response.data.token);
+      setShowLogin(false);
+    } else {
+      alert(response.data.message);
     }
+  } catch (error) {
+    alert("Something went wrong");
+    console.error(error);
+  }
+};
+
 
    
 
